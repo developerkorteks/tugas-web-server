@@ -1,0 +1,760 @@
+{
+  "info": {
+    "_postman_id": "7b8e5192-3c4a-4a81-9df6-91b48b792e3a",
+    "name": "Tugas Pertemuan 4 - REST API Produk (Full CRUD)",
+    "description": "Koleksi Postman Lengkap untuk Tugas Mandiri Resource Produk (Pertemuan 4 Teknologi Web Service). Meliputi GET, POST, PUT, PATCH, DELETE, validasi error 400, conflict 409, not found 404, dan method not allowed 405.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Create (POST)",
+      "item": [
+        {
+          "name": "1.1 Tambah Produk Lengkap (201 Created)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Header Location exists\", function () {",
+                  "    pm.response.to.have.header(\"Location\");",
+                  "});",
+                  "pm.test(\"Response body contains new product ID and data\", function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"id\");",
+                  "    pm.expect(json.kode).to.eql(\"PRD-004\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kode\": \"PRD-004\",\n  \"nama\": \"Headset Gaming RGB\",\n  \"kategori\": \"Aksesoris\",\n  \"harga\": 450000,\n  \"stok\": 20\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produk.php",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"]
+            }
+          }
+        },
+        {
+          "name": "1.2 Tambah Produk Kode Duplikat (409 Conflict)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 409 Conflict\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kode\": \"PRD-004\",\n  \"nama\": \"Headset KW\",\n  \"kategori\": \"Aksesoris\",\n  \"harga\": 200000,\n  \"stok\": 10\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produk.php",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"]
+            }
+          }
+        },
+        {
+          "name": "1.3 Tambah Produk Field Kurang (400 Bad Request)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Error message indicates missing fields\", function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"error\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kode\": \"PRD-005\",\n  \"nama\": \"Mousepad Jumbo\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produk.php",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"]
+            }
+          }
+        },
+        {
+          "name": "1.4 Tambah Produk Harga / Stok Negatif (400 Bad Request)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kode\": \"PRD-006\",\n  \"nama\": \"Flashdisk 64GB\",\n  \"kategori\": \"Penyimpanan\",\n  \"harga\": -95000,\n  \"stok\": 10\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produk.php",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"]
+            }
+          }
+        },
+        {
+          "name": "1.5 Tambah Produk Body Kosong / Format Salah (400 Bad Request)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{base_url}}/produk.php",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Read (GET)",
+      "item": [
+        {
+          "name": "2.1 Ambil Semua Produk (200 OK)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response is an array of products\", function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.be.an(\"array\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/produk.php",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"]
+            }
+          }
+        },
+        {
+          "name": "2.2 Ambil Produk by ID Valid (200 OK)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Product ID matches query\", function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.eql(2);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/produk.php?id=2",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.3 Ambil Produk by ID Tidak Ada (404 Not Found)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 Not Found\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/produk.php?id=999",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "999"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.4 Ambil Produk by ID Format Salah (400 Bad Request)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/produk.php?id=abc",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "abc"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Update Full (PUT)",
+      "item": [
+        {
+          "name": "3.1 Ganti Seluruh Data Produk (200 OK)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"All fields updated successfully\", function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.nama).to.eql(\"Laptop Asus Vivobook 14 OLED\");",
+                  "    pm.expect(json.harga).to.eql(9200000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kode\": \"PRD-001\",\n  \"nama\": \"Laptop Asus Vivobook 14 OLED\",\n  \"kategori\": \"Elektronik\",\n  \"harga\": 9200000,\n  \"stok\": 15\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produk.php?id=1",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.2 Ganti Data Field Tidak Lengkap (400 Bad Request)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nama\": \"Laptop Tanpa Field Lain\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produk.php?id=1",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.3 Ganti Data Kode Bentrok (409 Conflict)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 409 Conflict\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kode\": \"PRD-002\",\n  \"nama\": \"Laptop Bentrok\",\n  \"kategori\": \"Elektronik\",\n  \"harga\": 9200000,\n  \"stok\": 15\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produk.php?id=1",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.4 Ganti Data ID Tidak Ditemukan (404 Not Found)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 Not Found\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kode\": \"PRD-999\",\n  \"nama\": \"Produk Tidak Ada\",\n  \"kategori\": \"Misc\",\n  \"harga\": 50000,\n  \"stok\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produk.php?id=999",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "999"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Update Partial (PATCH)",
+      "item": [
+        {
+          "name": "4.1 Ubah Harga & Stok Produk (200 OK)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Field harga & stok updated\", function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.harga).to.eql(8250000);",
+                  "    pm.expect(json.stok).to.eql(10);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"harga\": 8250000,\n  \"stok\": 10\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produk.php?id=1",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.2 Ubah dengan Nilai Negatif (400 Bad Request)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"harga\": -50000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produk.php?id=1",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.3 Ubah Produk ID Tidak Ditemukan (404 Not Found)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 Not Found\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"harga\": 900000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produk.php?id=999",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "999"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Delete (DELETE)",
+      "item": [
+        {
+          "name": "5.1 Hapus Produk ID Valid (204 No Content)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204 No Content\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/produk.php?id=1",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.2 Hapus Ulang ID Sama / Tidak Ditemukan (404 Not Found)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 Not Found\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/produk.php?id=1",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.3 Hapus Produk Tanpa Parameter ID (400 Bad Request)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/produk.php",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Edge Cases",
+      "item": [
+        {
+          "name": "6.1 Method Not Allowed (OPTIONS / 405)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 405 Method Not Allowed\", function () {",
+                  "    pm.response.to.have.status(405);",
+                  "});",
+                  "pm.test(\"Header Allow exists\", function () {",
+                  "    pm.response.to.have.header(\"Allow\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "OPTIONS",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/produk.php",
+              "host": ["{{base_url}}"],
+              "path": ["produk.php"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
